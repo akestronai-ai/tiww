@@ -31,11 +31,14 @@ type SipResult = {
   futureValue: number;
   wealthGained: number;
   returnPercent: number;
+  adjustedFutureValue: number;
+  adjustedWealthGained: number;
   yearlyData: {
     year: number;
     invested: number;
     returns: number;
     total: number;
+    adjustedTotal: number;
   }[];
 };
 
@@ -43,6 +46,7 @@ function calculateSip(
   monthlyAmount: number,
   annualRate: number,
   years: number,
+  inflationRate: number,
 ): SipResult {
   const monthlyRate = annualRate / 100 / 12;
   const totalMonths = years * 12;
@@ -63,6 +67,10 @@ function calculateSip(
   const returnPercent =
     totalInvested > 0 ? ((futureValue - totalInvested) / totalInvested) * 100 : 0;
 
+  // Inflation adjustment: discount the future value to today's purchasing power
+  const adjustedFutureValue = futureValue / Math.pow(1 + inflationRate / 100, years);
+  const adjustedWealthGained = Math.max(0, adjustedFutureValue - totalInvested);
+
   // Build yearly breakdown
   const yearlyData: SipResult['yearlyData'] = [];
   for (let y = 1; y <= years; y++) {
@@ -77,15 +85,25 @@ function calculateSip(
         (((1 + monthlyRate) ** months - 1) / monthlyRate) *
         (1 + monthlyRate);
     }
+    const adjustedTotal = total / Math.pow(1 + inflationRate / 100, y);
     yearlyData.push({
       year: y,
       invested,
       returns: total - invested,
       total,
+      adjustedTotal,
     });
   }
 
-  return { totalInvested, futureValue, wealthGained, returnPercent, yearlyData };
+  return {
+    totalInvested,
+    futureValue,
+    wealthGained,
+    returnPercent,
+    adjustedFutureValue,
+    adjustedWealthGained,
+    yearlyData,
+  };
 }
 
 /* ───── Donut component ───── */
@@ -139,7 +157,7 @@ function DonutChart({
         </svg>
         <div className="absolute inset-0 flex flex-col items-center justify-center">
           <span className="text-xs text-[var(--color-text-muted)] uppercase tracking-wider">
-            Total
+            Nominal Total
           </span>
           <span className="text-lg font-display font-semibold fin-number">
             {formatCurrency(total)}
@@ -153,7 +171,7 @@ function DonutChart({
         </div>
         <div className="flex items-center gap-2">
           <span className="w-3 h-3 rounded-full bg-[var(--color-accent-base)]" />
-          <span className="text-[var(--color-text-muted)]">Returns</span>
+          <span className="text-[var(--color-text-muted)]">Nominal Returns</span>
         </div>
       </div>
     </div>
@@ -166,16 +184,20 @@ function StatCard({
   label,
   value,
   accent = false,
+  warning = false,
 }: {
   icon: React.ElementType;
   label: string;
   value: string;
   accent?: boolean;
+  warning?: boolean;
 }) {
   return (
     <div
       className={`glass-card p-5 ${
         accent ? 'border-t-2 border-t-[var(--color-accent-base)]' : ''
+      } ${
+        warning ? 'border-t-2 border-t-[#eab308]' : ''
       }`}
     >
       <div className="flex items-center gap-2 mb-2">
@@ -185,8 +207,10 @@ function StatCard({
         </span>
       </div>
       <div
-        className={`text-2xl font-display fin-number ${
+        className={`text-xl xl:text-2xl font-display fin-number ${
           accent ? 'text-[var(--color-accent-base)]' : ''
+        } ${
+          warning ? 'text-[#eab308]' : ''
         }`}
       >
         {value}
@@ -200,15 +224,17 @@ export default function SIPCalculator() {
   const [monthlyAmount, setMonthlyAmount] = useState('25000');
   const [annualRate, setAnnualRate] = useState('15');
   const [years, setYears] = useState('10');
+  const [inflationRate, setInflationRate] = useState('6');
   const [hasCalculated, setHasCalculated] = useState(false);
 
   const result = useMemo(() => {
     const amt = Number(monthlyAmount) || 0;
     const rate = Number(annualRate) || 0;
     const yr = Number(years) || 0;
+    const inf = Number(inflationRate) || 0;
     if (amt <= 0 || yr <= 0) return null;
-    return calculateSip(amt, rate, yr);
-  }, [monthlyAmount, annualRate, years]);
+    return calculateSip(amt, rate, yr, inf);
+  }, [monthlyAmount, annualRate, years, inflationRate]);
 
   const handleCalculate = (e: React.FormEvent) => {
     e.preventDefault();
@@ -224,6 +250,7 @@ export default function SIPCalculator() {
         Invested: Math.round(d.invested),
         Returns: Math.round(d.returns),
         Total: Math.round(d.total),
+        AdjustedTotal: Math.round(d.adjustedTotal),
       })) ?? [],
     [result],
   );
@@ -232,7 +259,7 @@ export default function SIPCalculator() {
   const amountPresets = [5000, 10000, 25000, 50000, 100000];
 
   return (
-    <div className="flex flex-col md:flex-row flex-1 max-w-[1600px] mx-auto w-full">
+    <div className="flex flex-col md:flex-row flex-1 max-w-[1600px] mx-auto w-full min-w-0 overflow-hidden">
       {/* ── Side panel ── */}
       <aside className="w-full md:w-[350px] lg:w-[400px] border-b md:border-b-0 md:border-r border-white/5 bg-[var(--color-paper-1)] flex-shrink-0 md:sticky md:top-16 h-auto md:h-[calc(100vh-64px)] overflow-y-auto">
         <div className="p-6 lg:p-8">
@@ -242,7 +269,7 @@ export default function SIPCalculator() {
             </h1>
             <p className="text-sm text-[var(--color-text-muted)]">
               Plan systematic investments and project future wealth with
-              compound growth.
+              compound growth & inflation adjustments.
             </p>
           </div>
 
@@ -322,6 +349,36 @@ export default function SIPCalculator() {
               />
             </div>
 
+            {/* Inflation Rate */}
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-[var(--color-text-muted)] flex items-center justify-between">
+                Expected Inflation Rate (%)
+                <span className="fin-number text-[#eab308] text-xs">
+                  {inflationRate}%
+                </span>
+              </label>
+              <input
+                type="range"
+                min="0"
+                max="25"
+                step="0.5"
+                value={inflationRate}
+                onChange={(e) => setInflationRate(e.target.value)}
+                className="w-full h-2 rounded-full appearance-none cursor-pointer bg-[var(--color-paper-3)] accent-[#eab308]"
+              />
+              <input
+                type="number"
+                min="0"
+                max="50"
+                step="0.1"
+                value={inflationRate}
+                onChange={(e) => setInflationRate(e.target.value)}
+                placeholder="e.g. 6"
+                className="w-full bg-[var(--color-paper-2)] border border-white/5 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-[#eab308] transition-hallmark fin-number"
+                required
+              />
+            </div>
+
             {/* Time Period */}
             <div className="space-y-2">
               <label className="text-sm font-medium text-[var(--color-text-muted)] flex items-center justify-between">
@@ -369,13 +426,14 @@ export default function SIPCalculator() {
           {/* Quick info */}
           <div className="mt-8 p-4 rounded-xl bg-[var(--color-paper-2)] border border-white/5">
             <h4 className="text-xs font-medium text-[var(--color-text-muted)] uppercase tracking-wider mb-3">
-              What is SIP?
+              Inflation & Purchasing Power
             </h4>
             <p className="text-xs text-[var(--color-text-muted)] leading-relaxed">
-              A Systematic Investment Plan lets you invest a fixed amount
-              regularly (e.g. monthly). It leverages <strong className="text-[var(--color-text)]">rupee-cost averaging</strong>{' '}
-              and the <strong className="text-[var(--color-text)]">power of compounding</strong>{' '}
-              to potentially grow your wealth over time.
+              Inflation decreases the purchasing power of your money over time.
+              While standard SIP calculations show nominal figures, the{' '}
+              <strong className="text-[var(--color-text)]">Inflation Adjusted Value</strong>{' '}
+              tells you what your future wealth will be worth in terms of{' '}
+              <strong className="text-[var(--color-text)]">today's money</strong>.
             </p>
           </div>
         </div>
@@ -392,7 +450,7 @@ export default function SIPCalculator() {
               Configure your SIP plan
             </h2>
             <p className="text-[var(--color-text-muted)] max-w-sm">
-              Set your monthly investment amount, expected return rate, and time
+              Set your monthly investment amount, expected return rate, inflation, and time
               horizon on the left to project your future wealth.
             </p>
           </div>
@@ -412,7 +470,7 @@ export default function SIPCalculator() {
             </div>
 
             {/* Stat cards */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
               <StatCard
                 icon={IndianRupee}
                 label="Total Invested"
@@ -420,18 +478,24 @@ export default function SIPCalculator() {
               />
               <StatCard
                 icon={Wallet}
-                label="Future Value"
+                label="Nominal Value"
                 value={formatCurrencyFull(Math.round(result.futureValue))}
                 accent
               />
               <StatCard
+                icon={Wallet}
+                label="Adjusted Value"
+                value={formatCurrencyFull(Math.round(result.adjustedFutureValue))}
+                warning
+              />
+              <StatCard
                 icon={TrendingUp}
-                label="Wealth Gained"
-                value={formatCurrencyFull(Math.round(result.wealthGained))}
+                label="Real Wealth Gain"
+                value={formatCurrencyFull(Math.round(result.adjustedWealthGained))}
               />
               <StatCard
                 icon={Percent}
-                label="Absolute Return"
+                label="Nominal Return"
                 value={`${result.returnPercent.toFixed(1)}%`}
                 accent
               />
@@ -472,19 +536,22 @@ export default function SIPCalculator() {
                   <div className="flex justify-between items-center py-3 border-b border-white/5">
                     <span className="text-sm text-[var(--color-text-muted)] flex items-center gap-2">
                       <Percent className="w-4 h-4" />
-                      Expected Rate
+                      Expected / Inflation
                     </span>
                     <span className="fin-number text-sm font-medium">
-                      {annualRate}% p.a.
+                      {annualRate}% / {inflationRate}%
                     </span>
                   </div>
                   <div className="flex justify-between items-center py-3">
                     <span className="text-sm text-[var(--color-text-muted)] flex items-center gap-2">
                       <TrendingUp className="w-4 h-4" />
-                      Growth Multiple
+                      Real Growth Multiple
                     </span>
                     <span className="fin-number text-sm font-medium text-[var(--color-accent-base)]">
-                      {(result.futureValue / result.totalInvested).toFixed(2)}x
+                      {(result.adjustedFutureValue / result.totalInvested).toFixed(2)}x
+                      <span className="text-[var(--color-text-muted)] text-xs font-normal ml-1.5">
+                        (Nominal {(result.futureValue / result.totalInvested).toFixed(2)}x)
+                      </span>
                     </span>
                   </div>
                 </div>
@@ -495,16 +562,20 @@ export default function SIPCalculator() {
             <div className="glass-card p-6 mb-8">
               <div className="flex items-center justify-between mb-6">
                 <h3 className="font-display font-medium">
-                  Wealth Growth Over Time
+                  Wealth Growth (Nominal vs Inflation Adjusted)
                 </h3>
-                <div className="flex items-center gap-4 text-xs text-[var(--color-text-muted)]">
+                <div className="flex items-center gap-4 text-xs text-[var(--color-text-muted)] flex-wrap">
                   <span className="flex items-center gap-1.5">
                     <span className="w-3 h-1.5 rounded-full bg-[var(--color-accent-base)]/30" />
                     Invested
                   </span>
                   <span className="flex items-center gap-1.5">
                     <span className="w-3 h-1.5 rounded-full bg-[var(--color-accent-base)]" />
-                    Returns
+                    Nominal Value
+                  </span>
+                  <span className="flex items-center gap-1.5">
+                    <span className="w-3 h-1.5 rounded-full bg-[#eab308]" />
+                    Adjusted Value (Today's money)
                   </span>
                 </div>
               </div>
@@ -548,6 +619,24 @@ export default function SIPCalculator() {
                         <stop
                           offset="95%"
                           stopColor="var(--color-accent-base)"
+                          stopOpacity={0}
+                        />
+                      </linearGradient>
+                      <linearGradient
+                        id="sipAdjusted"
+                        x1="0"
+                        y1="0"
+                        x2="0"
+                        y2="1"
+                      >
+                        <stop
+                          offset="5%"
+                          stopColor="#eab308"
+                          stopOpacity={0.25}
+                        />
+                        <stop
+                          offset="95%"
+                          stopColor="#eab308"
                           stopOpacity={0}
                         />
                       </linearGradient>
@@ -598,9 +687,10 @@ export default function SIPCalculator() {
                         color: 'var(--color-text-muted)',
                         marginBottom: '4px',
                       }}
-                      formatter={(value: unknown) => [
-                        formatCurrencyFull(Number(value)),
-                      ]}
+                      formatter={(value: unknown, name: any) => {
+                        const labelName = name === 'Total' ? 'Nominal Value' : name === 'AdjustedTotal' ? 'Adjusted Value' : name;
+                        return [formatCurrencyFull(Number(value)), labelName];
+                      }}
                     />
                     <Area
                       type="monotone"
@@ -616,6 +706,13 @@ export default function SIPCalculator() {
                       stroke="var(--color-accent-base)"
                       strokeWidth={2}
                       fill="url(#sipTotal)"
+                    />
+                    <Area
+                      type="monotone"
+                      dataKey="AdjustedTotal"
+                      stroke="#eab308"
+                      strokeWidth={2}
+                      fill="url(#sipAdjusted)"
                     />
                   </AreaChart>
                 </ResponsiveContainer>
@@ -713,8 +810,8 @@ export default function SIPCalculator() {
                     <tr>
                       <th className="px-6 py-3">Year</th>
                       <th className="px-6 py-3 text-right">Invested</th>
-                      <th className="px-6 py-3 text-right">Returns</th>
-                      <th className="px-6 py-3 text-right">Total Value</th>
+                      <th className="px-6 py-3 text-right">Nominal Value</th>
+                      <th className="px-6 py-3 text-right">Inflation Adjusted</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-white/5">
@@ -727,11 +824,11 @@ export default function SIPCalculator() {
                         <td className="px-6 py-3 text-right fin-number">
                           {formatCurrencyFull(row.invested)}
                         </td>
-                        <td className="px-6 py-3 text-right fin-number text-[var(--color-accent-base)]">
-                          {formatCurrencyFull(Math.round(row.returns))}
-                        </td>
                         <td className="px-6 py-3 text-right fin-number font-medium">
                           {formatCurrencyFull(Math.round(row.total))}
+                        </td>
+                        <td className="px-6 py-3 text-right fin-number font-medium text-[#eab308]">
+                          {formatCurrencyFull(Math.round(row.adjustedTotal))}
                         </td>
                       </tr>
                     ))}
