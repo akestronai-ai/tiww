@@ -1,0 +1,144 @@
+/* Hallmark · macrostructure: 03-Marquee-Hero (Landing) & 05-Workbench (App) · genre: modern-minimal · theme: custom-financial
+ * axes: paper-dark · display-sans · chromatic-green
+ */
+
+@import "tailwindcss";
+
+@theme {
+  --color-navy: var(--color-paper-1);
+  --color-surface: var(--color-paper-2);
+  --color-surface-hover: var(--color-paper-3);
+  --color-surface-border: var(--color-border);
+  --color-accent: var(--color-accent-base);
+  --color-accent-hover: var(--color-accent-hover);
+  --color-negative: var(--color-negative-base);
+  --color-muted: var(--color-text-muted);
+  --color-text-main: var(--color-text);
+
+  --font-sans: "Outfit", system-ui, sans-serif;
+  --font-mono: "Fira Code", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}
+
+@layer base {
+  :root {
+    /* Light Theme (default if not .dark) */
+    --color-paper-1: #F8FAFC;
+    --color-paper-2: #FFFFFF;
+    --color-paper-3: #F1F5F9;
+    --color-text: #0F172A;
+    --color-text-muted: #64748B;
+    --color-accent-base: #00A37A;
+    --color-accent-hover: #00C896;
+    --color-negative-base: #E53E3E;
+    --color-border: #E2E8F0;
+    --color-border-subtle: rgba(0, 0, 0, 0.05);
+    
+    --font-body: "Outfit", system-ui, sans-serif;
+    --font-display: "Outfit", system-ui, sans-serif;
+    --font-mono-stack: "Fira Code", ui-monospace, monospace;
+  }
+
+  .dark {
+    /* Dark Theme (applied via .dark class) */
+    --color-paper-1: #0B1220;
+    --color-paper-2: #131C2E;
+    --color-paper-3: #1a253c;
+    --color-text: #F5F7FA;
+    --color-text-muted: #8A94A6;
+    --color-accent-base: #00C896;
+    --color-accent-hover: #00e0a8;
+    --color-negative-base: #FF4D4F;
+    --color-border: #1e2a42;
+    --color-border-subtle: rgba(255, 255, 255, 0.05);
+  }
+
+  html, body {
+    background-color: var(--color-paper-1);
+    color: var(--color-text);
+    font-family: var(--font-body);
+    margin: 0;
+    overflow-x: clip;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+
+  /* Microinteractions & utilities */
+  .transition-hallmark {
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .glass-card {
+    background-color: var(--color-paper-2);
+    border: 1px solid var(--color-border-subtle);
+    box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    border-radius: 16px; /* more rounded, premium feel */
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  }
+  
+  .dark .glass-card {
+    box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5), 0 4px 6px -2px rgba(0, 0, 0, 0.3);
+  }
+
+  /* Typography utilities for Hallmark headers */
+  h1, h2, h3, h4 {
+    font-family: var(--font-display);
+    font-style: normal;
+    overflow-wrap: anywhere;
+    min-width: 0;
+    letter-spacing: -0.02em;
+  }
+
+  .fin-number {
+    font-family: var(--font-mono-stack);
+    font-variant-numeric: tabular-nums;
+  }
+  
+  /* Gradient text utility */
+  .text-gradient {
+    background: linear-gradient(135deg, var(--color-text) 0%, var(--color-text-muted) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  
+  .text-gradient-accent {
+    background: linear-gradient(135deg, var(--color-accent-base) 0%, var(--color-accent-hover) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Range slider thumb styling */
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--color-accent-base);
+    cursor: pointer;
+    box-shadow: 0 0 8px rgba(0, 200, 150, 0.4);
+    border: 2px solid var(--color-paper-1);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+  input[type="range"]::-webkit-slider-thumb:hover {
+    transform: scale(1.15);
+    box-shadow: 0 0 12px rgba(0, 200, 150, 0.6);
+  }
+  input[type="range"]::-moz-range-thumb {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--color-accent-base);
+    cursor: pointer;
+    box-shadow: 0 0 8px rgba(0, 200, 150, 0.4);
+    border: 2px solid var(--color-paper-1);
+  }
+
+  /* Fade-in animation for results */
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+}
