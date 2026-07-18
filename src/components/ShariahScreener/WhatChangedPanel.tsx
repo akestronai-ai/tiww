@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ChevronDown, ChevronUp, ArrowRight, ArrowLeft } from 'lucide-react';
+import { ChevronDown, ChevronUp, ArrowRight, ArrowLeft, RefreshCw } from 'lucide-react';
 
 interface RecompositionItem {
   direction: string;
@@ -25,8 +25,8 @@ export default function WhatChangedPanel({ data }: Props) {
         className="w-full flex items-center justify-between p-4 hover:bg-black/5 dark:hover:bg-white/5 transition-hallmark"
       >
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full bg-[var(--color-paper-1)] border border-[var(--color-border-subtle)] flex items-center justify-center">
-            <span className="text-lg">🔄</span>
+          <div className="w-10 h-10 rounded-full bg-[var(--color-paper-1)] border border-[var(--color-border-subtle)] flex items-center justify-center text-blue-500">
+            <RefreshCw className="w-5 h-5" />
           </div>
           <div className="text-left">
             <h3 className="font-medium text-[var(--color-text)]">Index Recomposition</h3>
