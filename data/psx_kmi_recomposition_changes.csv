@@ -1,0 +1,62 @@
+direction,ticker,name,reason
+Incoming,AASM,Al-Abid Silk Mills Limited,
+Incoming,ASC,Al Shaheer Corporation Limited,
+Incoming,ASTM,Asim Textile Mills Limited,
+Incoming,BAFS,Baba Farid Sugar Mills Limited,
+Incoming,CHAS,Chashma Sugar Mills Limited,
+Incoming,COLG,Colgate-Palmolive (Pakistan) Limited,
+Incoming,DBSL,Dadabhoy Sack Limited,
+Incoming,DFSM,Dewan Farooque Spinning Mills Limited,
+Incoming,DSL,Dost Steels Limited,
+Incoming,DWSM,Dewan Sugar Mills Limited,
+Incoming,FASM,Faisal Spinning Mills Limited,
+Incoming,FIL,Fateh Industries Limited,
+Incoming,GADT,Gadoon Textile Mills Limited,
+Incoming,HATM,Hamid Textile Mills Limited,
+Incoming,INKL,International Knitwear Limited,
+Incoming,ITANZ,Itanz Technologies Limited,
+Incoming,JATM,J.A. Textile Mills Limited,
+Incoming,JUBS,Jubilee Spinning & Weaving Mills Ltd.,
+Incoming,KSTM,Khalid Siraj Textile Mills Limited,
+Incoming,MIRKS,Mirpurkhas Sugar Mills Limited,
+Incoming,MRNS,Mehran Sugar Mills Limited,
+Incoming,MUBT,Mubarak Textile Mills Limited,
+Incoming,NCML,Nazir Cotton Mills Limited,
+Incoming,NONS,Noon Sugar Mills Limited,
+Incoming,OTSU,Otsuka Pakistan Limited,
+Incoming,PICT,Pakistan International Container,
+Incoming,PMRS,The Premier Sugar Mills,
+Incoming,QTECH,Quantum Data Technologies Limited,
+Incoming,QUET,Quetta Textile Mills Limited,
+Incoming,RUBY,Ruby Textile Mills Limited,
+Incoming,SASML,Sindh Abadgars Sugar Mills Limited,
+Incoming,SGABL,SG.Allied Businesses Limited,
+Incoming,SKRS,Sakrand Sugar Mills Limited,
+Incoming,SML,Shakarganj Limited,
+Incoming,SPL,Sitara Peroxide Limited,
+Incoming,SRVI,Service Industries Limited,
+Incoming,SSML,Saritow Spinning Mills Limited,
+Incoming,SUHJ,Suhail Jute Mills Limited,
+Incoming,SWL,Standard Worldwide Limited,
+Incoming,THCCL,Thatta Cement Company Limited,
+Incoming,UNITY,Unity Foods Limited,
+Incoming,FNBM,First National Bank Modaraba,
+Outgoing,AABS,Al-Abbas Sugar Mills Limited,Shariah non-compliance
+Outgoing,AKDHL,AKD Hospitality Limited,Shariah non-compliance
+Outgoing,APL,Attock Petroleum Limited,Shariah non-compliance
+Outgoing,BRRG,B.R.R Guardian Limited,Shariah non-compliance
+Outgoing,DIIL,Diamond Industries Limited,Shariah non-compliance
+Outgoing,GEMNETS,Nets International Communication Limited,Shariah non-compliance
+Outgoing,HABSM,Habib Sugar Mills Limited,Shariah non-compliance
+Outgoing,JKSM,J.K. Spinning Mills Limited,Shariah non-compliance
+Outgoing,KML,Kohinoor Mills Limited,Shariah non-compliance
+Outgoing,NATF,National Foods Limited,Shariah non-compliance
+Outgoing,OBOY,Oilboy Energy Limited,Shariah non-compliance
+Outgoing,SAIF,Saif Textile Mills Limited,Shariah non-compliance
+Outgoing,SHEZ,Shezan International Limited,Shariah non-compliance
+Outgoing,SPWL,Saif Power Limited,Shariah non-compliance
+Outgoing,TBL,Treet Battery Limited,Shariah non-compliance
+Outgoing,TPLP,TPL Properties Limited,Shariah non-compliance
+Outgoing,TPLT,TPL Trakker Limited,Shariah non-compliance
+Outgoing,UCAPM,Unicap Modaraba,Absence of Shariah certificate
+Outgoing,YOUW,Yousaf Weaving Mills Limited,Shariah non-compliance

@@ -46,8 +46,8 @@ export default function Layout() {
   const navLinks = [
     { name: 'SIP Calculator', path: '/sip-calculator', active: true },
     { name: 'CAGR Calculator', path: '/cagr-calculator', active: true },
+    { name: 'Shariah Screener', path: '/shariah-screener', active: true },
     { name: 'KSE-100 Index', path: '#', active: false },
-    { name: 'Compare Stocks', path: '#', active: false },
   ];
 
   return (

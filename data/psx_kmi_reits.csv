@@ -1,0 +1,7 @@
+ticker,name,debt_ratio,investment_ratio,income_ratio,illiquid_assets_ratio,net_liquid_assets,share_price,shariah_status
+DCR,Dolmen City REIT,0.00%,0.00%,0.00%,98.84%,(0.62),0.00,Compliant
+TPLRF1,TPL REIT Fund 1,0.00%,0.00%,2.12%,78.88%,1.74,10.41,Compliant
+IREIT,Image Reit,0.00%,0.00%,0.00%,79.43%,2.59,9.27,Compliant
+SRR,Signature Residency Reit,0.00%,0.00%,0.00%,60.94%,(20.15),0.00,Compliant
+GRR,Globe Residency Reit,NA,NA,NA,NA,NA,NA,NC by nature
+JSRR,JS Rental REIT,NA,NA,NA,NA,NA,NA,NC by nature
