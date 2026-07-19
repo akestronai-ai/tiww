@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { ChevronDown, ChevronUp, ArrowRight, ArrowLeft, RefreshCw } from 'lucide-react';
 
 interface RecompositionItem {

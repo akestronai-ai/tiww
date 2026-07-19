@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { Search, Filter, ShieldCheck, ShieldAlert, Clock, Info } from 'lucide-react';
 import CompanyCard, { type Company } from '../components/ShariahScreener/CompanyCard';
 import WhatChangedPanel from '../components/ShariahScreener/WhatChangedPanel';

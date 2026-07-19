@@ -1,6 +1,22 @@
 import { useState } from 'react';
 import { Outlet, Link, useLocation } from 'react-router-dom';
-import { Search, Moon, Sun, MessageCircle, Phone, Video, MessageSquare, ArrowUpRight } from 'lucide-react';
+import { 
+  Search, 
+  Moon, 
+  Sun, 
+  MessageCircle, 
+  Phone, 
+  Video, 
+  MessageSquare, 
+  ArrowUpRight,
+  Menu,
+  X,
+  ShieldCheck,
+  TrendingUp,
+  PieChart,
+  Calculator,
+  ChevronRight
+} from 'lucide-react';
 
 const YoutubeIcon = ({ className }: { className?: string }) => (
   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
@@ -27,6 +43,7 @@ const LinkedinIcon = ({ className }: { className?: string }) => (
 
 export default function Layout() {
   const location = useLocation();
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isDark, setIsDark] = useState(
     document.documentElement.classList.contains('dark')
   );
@@ -44,18 +61,30 @@ export default function Layout() {
   };
 
   const navLinks = [
-    { name: 'SIP Calculator', path: '/sip-calculator', active: true },
-    { name: 'CAGR Calculator', path: '/cagr-calculator', active: true },
-    { name: 'Shariah Screener', path: '/shariah-screener', active: true },
-    { name: 'KSE-100 Index', path: '#', active: false },
+    { name: 'Shariah Screener', path: '/shariah-screener', active: true, icon: ShieldCheck, isNew: true, desc: 'PSX Shariah Compliance Screener' },
+    { name: 'SIP Calculator', path: '/sip-calculator', active: true, icon: TrendingUp, isNew: false, desc: 'Calculate investment returns' },
+    { name: 'CAGR Calculator', path: '/cagr-calculator', active: true, icon: PieChart, isNew: false, desc: 'Compound annual growth rate' },
+    { name: 'KSE-100 Index', path: '#', active: false, icon: Calculator, isNew: false, desc: 'Market overview' },
   ];
 
   return (
     <div className="min-h-screen flex flex-col bg-[var(--color-paper-1)] text-[var(--color-text)]">
-      {/* N1b SaaS Header Navigation */}
-      <header className="sticky top-0 z-50 bg-[var(--color-paper-1)]/80 backdrop-blur-xl border-b border-[var(--color-border-subtle)]">
+      {/* Navigation Header */}
+      <header className="sticky top-0 z-40 bg-[var(--color-paper-1)]/80 backdrop-blur-xl border-b border-[var(--color-border-subtle)]">
         <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-8">
+          <div className="flex items-center gap-4 sm:gap-6">
+            <button
+              onClick={() => setIsSidebarOpen(true)}
+              className="lg:hidden p-2 -ml-2 rounded-lg hover:bg-black/5 dark:hover:bg-white/10 text-[var(--color-text)] transition-colors flex items-center gap-2 group"
+              aria-label="Open Sidebar Navigation"
+              title="Open Mobile Navigation Menu"
+            >
+              <Menu className="w-5 h-5 text-[var(--color-accent-base)] group-hover:scale-110 transition-transform" />
+              <span className="text-xs font-semibold uppercase tracking-wider hidden sm:inline text-[var(--color-text-muted)] group-hover:text-[var(--color-text)]">
+                Menu
+              </span>
+            </button>
+
             <Link to="/" className="flex items-center gap-3 group">
               <img 
                 src="/logo.png" 
@@ -68,22 +97,31 @@ export default function Layout() {
                 </span>
               </div>
             </Link>
-            <nav className="hidden md:flex items-center gap-6 text-sm">
+
+            <nav className="hidden lg:flex items-center gap-6 text-sm ml-4">
               {navLinks.map((link) => (
                 <Link
                   key={link.name}
                   to={link.active ? link.path : '#'}
-                  className={`relative ${
+                  className={`relative flex items-center gap-1.5 font-medium transition-hallmark ${
                     location.pathname === link.path 
                       ? 'text-[var(--color-accent-base)]' 
                       : link.active 
-                        ? 'text-[var(--color-text-muted)] hover:text-[var(--color-text)] transition-hallmark' 
+                        ? 'text-[var(--color-text-muted)] hover:text-[var(--color-text)]' 
                         : 'text-[var(--color-text-muted)]/50 cursor-not-allowed'
                   }`}
                 >
+                  {link.name === 'Shariah Screener' && (
+                    <ShieldCheck className="w-4 h-4 text-emerald-500" />
+                  )}
                   {link.name}
+                  {link.isNew && (
+                    <span className="bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-full">
+                      New
+                    </span>
+                  )}
                   {!link.active && (
-                    <span className="ml-2 text-[10px] uppercase tracking-wider bg-black/5 dark:bg-white/5 text-[var(--color-text-muted)] px-1.5 py-0.5 rounded font-mono">
+                    <span className="text-[10px] uppercase tracking-wider bg-black/5 dark:bg-white/5 text-[var(--color-text-muted)] px-1.5 py-0.5 rounded font-mono">
                       Soon
                     </span>
                   )}
@@ -92,7 +130,15 @@ export default function Layout() {
             </nav>
           </div>
           
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3">
+            <Link 
+              to="/shariah-screener"
+              className="hidden sm:flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-full bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500/20 border border-emerald-500/20 transition-all"
+            >
+              <ShieldCheck className="w-3.5 h-3.5" />
+              <span>Shariah Screener</span>
+            </Link>
+
             <button 
               onClick={toggleTheme}
               className="p-2 rounded-full hover:bg-black/5 dark:hover:bg-white/10 text-[var(--color-text-muted)] hover:text-[var(--color-text)] transition-hallmark"
@@ -100,17 +146,212 @@ export default function Layout() {
             >
               {isDark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
             </button>
-            <div className="relative hidden sm:block">
+            
+            <div className="relative hidden md:block">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--color-text-muted)]" />
               <input 
                 type="text" 
                 placeholder="Search symbol (e.g., OGDC)..." 
-                className="bg-[var(--color-paper-2)] border border-[var(--color-border-subtle)] rounded-full pl-9 pr-4 py-1.5 text-sm w-64 focus:outline-none focus:border-[var(--color-accent-base)]/50 transition-hallmark placeholder:text-[var(--color-text-muted)]/50 text-[var(--color-text)]"
+                className="bg-[var(--color-paper-2)] border border-[var(--color-border-subtle)] rounded-full pl-9 pr-4 py-1.5 text-sm w-56 focus:outline-none focus:border-[var(--color-accent-base)]/50 transition-hallmark placeholder:text-[var(--color-text-muted)]/50 text-[var(--color-text)]"
               />
             </div>
           </div>
         </div>
       </header>
+
+      {/* Navigation Sidebar Drawer */}
+      {isSidebarOpen && (
+        <div className="fixed inset-0 z-50 flex lg:hidden">
+          {/* Backdrop Overlay */}
+          <div 
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity"
+            onClick={() => setIsSidebarOpen(false)}
+          />
+
+          {/* Sidebar Content Panel */}
+          <aside className="relative w-full max-w-xs sm:max-w-sm bg-[var(--color-paper-1)] border-r border-[var(--color-border-subtle)] shadow-2xl flex flex-col z-10 h-full overflow-y-auto">
+            {/* Sidebar Header */}
+            <div className="p-5 border-b border-[var(--color-border-subtle)] flex items-center justify-between bg-[var(--color-paper-2)]/50">
+              <Link 
+                to="/" 
+                onClick={() => setIsSidebarOpen(false)}
+                className="flex items-center gap-3 group"
+              >
+                <img 
+                  src="/logo.png" 
+                  alt="Shariah Capital Logo" 
+                  className="w-9 h-9 rounded-full object-cover border border-[var(--color-border-subtle)]"
+                />
+                <div>
+                  <h3 className="font-display font-medium text-base text-[var(--color-text)] leading-none">
+                    Shariah Capital
+                  </h3>
+                  <span className="text-[11px] text-[var(--color-text-muted)]">PSX Analytics Platform</span>
+                </div>
+              </Link>
+              
+              <button
+                onClick={() => setIsSidebarOpen(false)}
+                className="p-2 rounded-lg hover:bg-black/5 dark:hover:bg-white/10 text-[var(--color-text-muted)] hover:text-[var(--color-text)] transition-colors"
+                aria-label="Close Sidebar"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Sidebar Main Links */}
+            <div className="p-4 flex-1 space-y-6">
+              <div>
+                <div className="text-[11px] font-semibold text-[var(--color-text-muted)] uppercase tracking-wider px-3 mb-3">
+                  Main Navigation
+                </div>
+
+                <div className="space-y-1.5">
+                  {/* Shariah Screener Featured Link */}
+                  <Link
+                    to="/shariah-screener"
+                    onClick={() => setIsSidebarOpen(false)}
+                    className={`flex items-start gap-3 p-3 rounded-xl border transition-all ${
+                      location.pathname === '/shariah-screener'
+                        ? 'bg-emerald-500/10 border-emerald-500/40 text-emerald-400'
+                        : 'bg-emerald-500/5 hover:bg-emerald-500/10 border-emerald-500/20 text-[var(--color-text)]'
+                    }`}
+                  >
+                    <div className="p-2 rounded-lg bg-emerald-500/20 text-emerald-400 mt-0.5">
+                      <ShieldCheck className="w-5 h-5" />
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex items-center justify-between">
+                        <span className="font-semibold text-sm text-emerald-400">
+                          Shariah Screener
+                        </span>
+                        <span className="bg-emerald-500 text-black text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-full">
+                          New
+                        </span>
+                      </div>
+                      <p className="text-xs text-[var(--color-text-muted)] mt-0.5">
+                        KMI All Shares Shariah Screening 2026
+                      </p>
+                    </div>
+                    <ChevronRight className="w-4 h-4 text-emerald-500/60 self-center" />
+                  </Link>
+
+                  {/* SIP Calculator Link */}
+                  <Link
+                    to="/sip-calculator"
+                    onClick={() => setIsSidebarOpen(false)}
+                    className={`flex items-start gap-3 p-3 rounded-xl transition-all ${
+                      location.pathname === '/sip-calculator'
+                        ? 'bg-[var(--color-accent-base)]/10 border border-[var(--color-accent-base)]/30 text-[var(--color-accent-base)]'
+                        : 'hover:bg-[var(--color-paper-2)] border border-transparent text-[var(--color-text)]'
+                    }`}
+                  >
+                    <div className="p-2 rounded-lg bg-[var(--color-paper-2)] text-[var(--color-accent-base)] mt-0.5">
+                      <TrendingUp className="w-5 h-5" />
+                    </div>
+                    <div className="flex-1">
+                      <div className="font-medium text-sm">SIP Calculator</div>
+                      <p className="text-xs text-[var(--color-text-muted)] mt-0.5">
+                        Plan systematic investment returns
+                      </p>
+                    </div>
+                    <ChevronRight className="w-4 h-4 text-[var(--color-text-muted)] self-center" />
+                  </Link>
+
+                  {/* CAGR Calculator Link */}
+                  <Link
+                    to="/cagr-calculator"
+                    onClick={() => setIsSidebarOpen(false)}
+                    className={`flex items-start gap-3 p-3 rounded-xl transition-all ${
+                      location.pathname === '/cagr-calculator'
+                        ? 'bg-[var(--color-accent-base)]/10 border border-[var(--color-accent-base)]/30 text-[var(--color-accent-base)]'
+                        : 'hover:bg-[var(--color-paper-2)] border border-transparent text-[var(--color-text)]'
+                    }`}
+                  >
+                    <div className="p-2 rounded-lg bg-[var(--color-paper-2)] text-[var(--color-accent-base)] mt-0.5">
+                      <PieChart className="w-5 h-5" />
+                    </div>
+                    <div className="flex-1">
+                      <div className="font-medium text-sm">CAGR Calculator</div>
+                      <p className="text-xs text-[var(--color-text-muted)] mt-0.5">
+                        Calculate annual growth rate
+                      </p>
+                    </div>
+                    <ChevronRight className="w-4 h-4 text-[var(--color-text-muted)] self-center" />
+                  </Link>
+
+                  {/* KSE-100 Index Link */}
+                  <div className="flex items-start gap-3 p-3 rounded-xl opacity-60 cursor-not-allowed">
+                    <div className="p-2 rounded-lg bg-[var(--color-paper-2)] text-[var(--color-text-muted)] mt-0.5">
+                      <Calculator className="w-5 h-5" />
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex items-center justify-between">
+                        <span className="font-medium text-sm">KSE-100 Index</span>
+                        <span className="text-[9px] uppercase tracking-wider bg-black/10 dark:bg-white/10 px-1.5 py-0.5 rounded font-mono">
+                          Soon
+                        </span>
+                      </div>
+                      <p className="text-xs text-[var(--color-text-muted)] mt-0.5">
+                        Market performance & insights
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Community & Contact Section inside Sidebar */}
+              <div className="pt-4 border-t border-[var(--color-border-subtle)]">
+                <div className="text-[11px] font-semibold text-[var(--color-text-muted)] uppercase tracking-wider px-3 mb-3">
+                  Connect & Socials
+                </div>
+
+                <div className="space-y-2">
+                  <a 
+                    href="https://whatsapp.com/channel/0029Vb4dCWbJ93wPlhyt8K2H" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-3 p-2.5 rounded-lg text-sm text-[var(--color-text-muted)] hover:text-[var(--color-text)] hover:bg-[var(--color-paper-2)] transition-colors"
+                  >
+                    <MessageCircle className="w-4 h-4 text-emerald-500" />
+                    <span>WhatsApp Community</span>
+                  </a>
+                  <a 
+                    href="https://youtube.com/@tradinginsightswithwadeed?si=AeGBBD7gCcPZWlCH" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-3 p-2.5 rounded-lg text-sm text-[var(--color-text-muted)] hover:text-[var(--color-text)] hover:bg-[var(--color-paper-2)] transition-colors"
+                  >
+                    <YoutubeIcon className="w-4 h-4 text-red-500" />
+                    <span>YouTube Channel</span>
+                  </a>
+                  <a 
+                    href="https://www.instagram.com/tradinginsightswithwadeedwajid?utm_source=qr&igsh=c3ppbGw5aWY1cHNm" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-3 p-2.5 rounded-lg text-sm text-[var(--color-text-muted)] hover:text-[var(--color-text)] hover:bg-[var(--color-paper-2)] transition-colors"
+                  >
+                    <InstagramIcon className="w-4 h-4 text-pink-500" />
+                    <span>Instagram</span>
+                  </a>
+                </div>
+              </div>
+            </div>
+
+            {/* Sidebar Footer Controls */}
+            <div className="p-4 border-t border-[var(--color-border-subtle)] bg-[var(--color-paper-2)]/40 flex items-center justify-between">
+              <span className="text-xs text-[var(--color-text-muted)]">Theme Preference</span>
+              <button 
+                onClick={toggleTheme}
+                className="flex items-center gap-2 text-xs font-medium px-3 py-1.5 rounded-lg bg-[var(--color-paper-1)] border border-[var(--color-border-subtle)] text-[var(--color-text)] hover:border-[var(--color-accent-base)] transition-colors"
+              >
+                {isDark ? <Sun className="w-3.5 h-3.5 text-amber-400" /> : <Moon className="w-3.5 h-3.5 text-indigo-400" />}
+                <span>{isDark ? 'Dark Mode' : 'Light Mode'}</span>
+              </button>
+            </div>
+          </aside>
+        </div>
+      )}
 
       <main className="flex-1 flex flex-col">
         <Outlet />

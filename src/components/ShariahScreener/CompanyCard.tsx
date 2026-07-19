@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { ChevronDown, ChevronUp, CheckCircle2, XCircle, AlertCircle, Info } from 'lucide-react';
 
 export interface Company {
