@@ -57,7 +57,7 @@ export default function ShariahScreener() {
   }, [searchTerm, activeFilter]);
 
   return (
-    <div className="max-w-4xl mx-auto w-full px-4 py-8 flex-1">
+    <div className="max-w-7xl mx-auto w-full px-4 py-8 flex-1">
       {/* Header Section */}
       <div className="mb-10 text-center">
         <h1 className="text-3xl sm:text-4xl font-display font-medium mb-4">Shariah Screener</h1>
